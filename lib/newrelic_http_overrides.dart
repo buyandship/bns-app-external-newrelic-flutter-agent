@@ -24,10 +24,12 @@ class NewRelicHttpOverrides extends HttpOverrides {
     );
 
     client.findProxy = (uri) {
+      final modifiableEnvironment = Map<String, String>.from(Platform.environment);
+
       if (current != null) {
-        return current!.findProxyFromEnvironment(uri, Platform.environment);
+        return current!.findProxyFromEnvironment(uri, modifiableEnvironment);
       }
-      return findProxyFromEnvironmentFn?.call(uri, Platform.environment) ?? super.findProxyFromEnvironment(uri, Platform.environment);
+      return findProxyFromEnvironmentFn?.call(uri, modifiableEnvironment) ?? super.findProxyFromEnvironment(uri, modifiableEnvironment);
     };
 
     return client;
@@ -35,6 +37,8 @@ class NewRelicHttpOverrides extends HttpOverrides {
 
   @override
   String findProxyFromEnvironment(Uri? url, Map<String, String>? environment) {
-    return findProxyFromEnvironmentFn != null ? findProxyFromEnvironmentFn!(url, environment!) : super.findProxyFromEnvironment(url!, environment);
+    final modifiableEnvironment = Map<String, String>.from(environment ?? {});
+
+    return findProxyFromEnvironmentFn?.call(url, modifiableEnvironment) ?? current?.findProxyFromEnvironment(url!, modifiableEnvironment) ?? super.findProxyFromEnvironment(url!, modifiableEnvironment);
   }
 }
