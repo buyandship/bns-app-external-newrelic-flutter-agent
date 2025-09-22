@@ -1,3 +1,41 @@
+### 1.1.13
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.8.
+- Updated the native iOS agent to version 7.5.8.
+
+## Bug Fixes
+- Resolved an issue where network requests would fail where `noticeDistributedTrace` returns an empty Map
+
+### 1.1.12
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.7.
+- Updated the native iOS agent to version 7.5.6.
+- Resolved an issue for Android where the agent did not handle null values correctly in the `recordMetric` method.
+
+### 1.1.11
+
+## Enhancements
+
+- Upgraded native Android agent to version 7.6.6
+- Upgraded native iOS agent to version 7.5.5
+
+### 1.1.10
+
+## Enhancements
+
+- Upgraded native Android agent to version 7.6.5
+
+### 1.1.9
+
+## Enhancements
+
+- Upgraded native iOS agent to version 7.5.4
+- Added Tracing flag for start interaction method
+
 ### 1.1.8
 
 ## Enhancements

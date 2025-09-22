@@ -41,7 +41,7 @@ class NewrelicMobile {
       await NewrelicMobile.instance.startAgent(config);
       runApp();
       await NewrelicMobile.instance
-          .setAttribute("Flutter Agent Version", "1.1.8");
+          .setAttribute("Flutter Agent Version", "1.1.13");
     }, (Object error, StackTrace stackTrace) {
       NewrelicMobile.instance.recordError(error, stackTrace);
       FlutterError.presentError(
@@ -232,12 +232,18 @@ class NewrelicMobile {
   }
 
   Future<String> startInteraction(String actionName) async {
-    final Map<String, String> params = <String, String>{
-      'actionName': actionName
-    };
-    final String interactionId =
-        await _channel.invokeMethod('startInteraction', params);
-    return interactionId;
+    Config con = getAgentConfiguration();
+
+    if (con.interactionTracingEnabled) {
+      final Map<String, String> params = <String, String>{
+        'actionName': actionName
+      };
+      final String interactionId =
+          await _channel.invokeMethod('startInteraction', params);
+      return interactionId;
+    } else {
+      return "";
+    }
   }
 
   void addHTTPHeadersTrackingFor(List<String> headers) async {
