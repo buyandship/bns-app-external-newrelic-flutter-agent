@@ -1,3 +1,185 @@
+### 1.3.5
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.5.
+- Updated the native iOS agent to version 7.7.10 for Swift Package Manager. CocoaPods installs stay on 7.7.9 because 7.7.10 is not available on CocoaPods.
+
+### 1.3.4
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.4.
+- Updated the native iOS agent to version 7.7.9.
+
+### 1.3.3
+
+## Enhancements
+
+- Updated the native iOS agent to version 7.7.8.
+
+### 1.3.2
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.3.
+
+### 1.3.1
+
+## Enhancements
+
+- Updated the native iOS agent to version 7.7.7.
+
+### 1.3.0
+
+## Bug Fixes
+
+- Fixed an issue where a tracked HTTP header sent with more than one value would fail the request being instrumented. Multi-valued headers are now recorded as a single comma-separated value, and tracked header entries that cannot be read are skipped instead of throwing.
+- Fixed the `Flutter Agent Version` attribute reporting a stale version, as the release process no longer updated the Dart agent version constant.
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.2.
+- Updated the native iOS agent to version 7.7.6.
+
+### 1.2.11
+
+## Bug Fixes
+
+- Fixed the iOS bridge hardcoding `andParams: nil`, which silently dropped custom `httpParams` and tracked-header values from `MobileRequest`/`MobileRequestError` events. Android already forwarded params correctly.
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.1.
+- Updated the native iOS agent to version 7.7.6.
+
+### 1.2.10
+
+## Enhancements
+
+- Updated the native Android agent to version 7.8.0.
+- Updated the native iOS agent to version 7.7.5.
+
+### 1.2.9
+
+## Enhancements
+
+- Updated the native iOS agent to version 7.7.4.
+
+### 1.2.8
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.7.
+- Updated the native iOS agent to version 7.7.3.
+
+### 1.2.7
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.6.
+
+### 1.2.6
+
+## Enhancements
+
+- Updated the native iOS agent to version 7.7.2.
+
+### 1.2.5
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.5.
+
+### 1.2.4
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.4.
+
+### 1.2.3
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.2.
+- Updated the native iOS agent to version 7.7.1.
+
+### 1.2.2
+
+## Enhancements
+
+- Updated the native iOS agent to version 7.7.0. 
+
+### 1.2.1
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.1.
+
+### 1.2.0
+
+## Enhancements
+
+- Updated the native Android agent to version 7.7.0.
+- Updated the native iOS agent to version 7.6.3.
+
+### 1.1.21
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.15.
+- Updated the native iOS agent to version 7.6.1.
+
+### 1.1.20
+
+## Enhancements
+
+- Added conditional exports for Flutter Web (JS/WASM) support
+  - Package now compiles on web platforms without runtime errors
+  - Web platforms use no-op stubs (monitoring only works on iOS/Android)
+  - No breaking changes for existing mobile users
+  - See `WEB_SUPPORT.md` for details
+  - Updated the native Android agent to version 7.6.14.
+
+### 1.1.19
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.13.
+
+### 1.1.18
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.12.
+
+### 1.1.17
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.11.
+- Updated the native iOS agent to version 7.6.0.
+
+### 1.1.16
+
+## Bug Fixes
+
+- Fixed an issue where the `NewRelicNavigationObserver` would crash when handling routes without a `key` parameter, such as bottom sheets and modal dialogs.
+- Resolved navigation tracking failures for routes that don't extend `PageRoute`.
+
+## Enhancements
+
+- Improved type safety in `NewRelicNavigationObserver` by removing all dynamic types.
+- Added support for additional route types including `CupertinoPage` and `NoTransitionPage` from go_router.
+- Refactored navigation observer code for better maintainability and readability.
+
+### 1.1.15
+
+## Enhancements
+
+- Updated the native Android agent to version 7.6.10.
+- Updated the native iOS agent to version 7.5.11.
+
 ### 1.1.14
 
 ## Enhancements

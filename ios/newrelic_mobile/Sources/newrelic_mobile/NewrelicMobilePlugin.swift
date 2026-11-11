@@ -7,10 +7,12 @@ import Flutter
 import UIKit
 import NewRelic
 import NewRelic.NRLogger
-public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
+
+@objc(NewrelicMobilePlugin)
+public class NewrelicMobilePlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "newrelic_mobile", binaryMessenger: registrar.messenger())
-        let instance = SwiftNewrelicMobilePlugin()
+        let instance = NewrelicMobilePlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -21,7 +23,7 @@ public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
         case "startAgent":
             let applicationToken = args?["applicationToken"] as? String
             let dartVersion = args?["dartVersion"] as? String
-            var logLevel = NRLogLevelDebug.rawValue
+            var logLevel = NRLogLevelWarning.rawValue
             var collectorAddress: String? = nil
             var crashCollectorAddress: String? = nil
             
@@ -59,6 +61,7 @@ public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
                 
                 let strToLogLevel = [
                     "ERROR": NRLogLevelError.rawValue,
+                    "WARN": NRLogLevelWarning.rawValue,
                     "WARNING": NRLogLevelWarning.rawValue,
                     "INFO": NRLogLevelInfo.rawValue,
                     "VERBOSE": NRLogLevelVerbose.rawValue,
@@ -108,7 +111,7 @@ public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
             
             NewRelic.setPlatform(NRMAApplicationPlatform.platform_Flutter)
             let selector = NSSelectorFromString("setPlatformVersion:")
-            NewRelic.perform(selector, with:"1.1.12")
+            NewRelic.perform(selector, with:"1.3.5")
             
             if collectorAddress == nil && crashCollectorAddress == nil {
                 NewRelic.start(withApplicationToken: applicationToken!)
@@ -222,8 +225,9 @@ public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
             let bytesReceived = args!["bytesReceived"] as! NSNumber
             let responseBody = args!["responseBody"] as! NSString
             let traceHeaders = args?["traceAttributes"] as? [String : Any] ?? [:]
-            
-            NewRelic.noticeNetworkRequest(for: URL.init(string: url), httpMethod: httpMethod, startTime: Double(truncating: startTime), endTime: Double(truncating: endTime), responseHeaders: nil, statusCode: statusCode, bytesSent: UInt(truncating: bytesSent), bytesReceived: UInt(truncating: bytesReceived), responseData: responseBody.data(using: String.Encoding.utf8.rawValue), traceHeaders: traceHeaders, andParams: nil)
+            let httpParams = args?["params"] as? [String : Any]
+
+            NewRelic.noticeNetworkRequest(for: URL.init(string: url), httpMethod: httpMethod, startTime: Double(truncating: startTime), endTime: Double(truncating: endTime), responseHeaders: nil, statusCode: statusCode, bytesSent: UInt(truncating: bytesSent), bytesReceived: UInt(truncating: bytesReceived), responseData: responseBody.data(using: String.Encoding.utf8.rawValue), traceHeaders: traceHeaders, andParams: httpParams)
             result(true)
             
         case "noticeNetworkFailure":
@@ -264,9 +268,9 @@ public class SwiftNewrelicMobilePlugin: NSObject, FlutterPlugin {
             
             let name = args!["name"] as! String
             let category = args!["category"] as! String
-            let value = args!["value"] as! NSNumber?
-            let countUnit = args!["countUnit"] as! String?
-            let valueUnit = args!["valueUnit"] as! String?
+            let value = args?["value"] as? NSNumber
+            let countUnit = args?["countUnit"] as? String
+            let valueUnit = args?["valueUnit"] as? String
             
             if(value != nil  && countUnit != nil && valueUnit != nil) {
                 NewRelic.recordMetric(withName: name, category: category, value: value!, valueUnits: valueUnit,countUnits: countUnit)

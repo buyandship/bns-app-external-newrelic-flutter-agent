@@ -1,4 +1,4 @@
-<a href="https://opensource.newrelic.com/oss-category/#community-project"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Project.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Project.png"><img alt="New Relic Open Source community project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Project.png"></picture></a>
+<a href="https://opensource.newrelic.com/oss-category/#community-plus"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Plus.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"><img alt="New Relic Open Source community plus project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"></picture></a>
 
 # New Relic Flutter Agent 
 [![Pub](https://img.shields.io/pub/v/newrelic_mobile)](https://pub.dev/packages/newrelic_mobile)
@@ -23,8 +23,16 @@ using native components.
 ## Current Support:
 
 - Android API 24+
-- iOS 10
+- iOS:
+
+  | Agent Version | Minimum iOS Version |
+  | :--- | :--- |
+  | < 1.1.17 | iOS 10+ |
+  | 1.1.17 – 1.1.21 | iOS 16+ |
+  | >= 1.2.0 | iOS 15+ |
+
 - Depends on New Relic iOS/XCFramework and Android agents
+- **Flutter Web**: Compiles without errors (monitoring is no-op, use New Relic Browser Agent for web monitoring)
 
 ## Requirements
 
@@ -33,6 +41,17 @@ using native components.
 - [IOS native requirements](https://docs.newrelic.com/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements)
 - [Android native requirements](https://docs.newrelic.com/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements)
 
+## Web Platform Support
+
+As of version 1.1.20, this package supports compilation for Flutter Web (including WASM). However, **monitoring functionality is only available on native mobile platforms (iOS/Android)**.
+
+- On **mobile platforms**: Full New Relic Mobile SDK functionality
+- On **web platforms**: All methods are no-ops (compile without errors, but don't collect data)
+
+For web application monitoring, use the [New Relic Browser Agent](https://docs.newrelic.com/docs/browser/browser-monitoring/getting-started/introduction-browser-monitoring/) instead.
+
+See [WEB_SUPPORT.md](WEB_SUPPORT.md) for more details.
+
 ## Installation
 
 Install NewRelic plugin into your dart project by adding it to dependecies in your pubspec.yaml
@@ -40,9 +59,15 @@ Install NewRelic plugin into your dart project by adding it to dependecies in yo
 ```yaml
 
 dependencies:
-  newrelic_mobile: 1.1.4
+  newrelic_mobile: 1.1.20
   
 ```
+
+### iOS: use Swift Package Manager
+
+> **CocoaPods trunk is becoming read-only.** [CocoaPods plans to make its trunk read-only on December 2, 2026](https://blog.cocoapods.org/CocoaPods-Specs-Repo/). Builds that use already-published pod versions keep working, but no new pod versions, including new releases of the `NewRelicAgent` pod, can be published after that date.
+
+This plugin ships a `Package.swift` (`ios/newrelic_mobile/Package.swift`) that pulls the New Relic iOS agent from [newrelic-ios-agent-spm](https://github.com/newrelic/newrelic-ios-agent-spm). We recommend enabling Flutter's Swift Package Manager support in your app so the agent is resolved through SPM instead of CocoaPods. See Flutter's [Swift Package Manager for app developers](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers) guide.
 
 ## Flutter Setup
 
@@ -219,7 +244,7 @@ In android/settings.gradle:
       id "dev.flutter.flutter-plugin-loader" version "1.0.0"
       id "com.android.application" version "7.4.2" apply false
       id "org.jetbrains.kotlin.android" version "1.7.10" apply false
-      id "com.newrelic.agent.android" version "7.6.7" apply false // <-- include this
+      id "com.newrelic.agent.android" version "7.8.2" apply false // <-- include this
    }
    ```
 
@@ -243,7 +268,7 @@ Or, if you are using the traditional way to apply the plugin:
      }
      dependencies {
        ...
-       classpath "com.newrelic.agent.android:agent-gradle-plugin:7.6.6"
+       classpath "com.newrelic.agent.android:agent-gradle-plugin:7.8.2"
      }
    }
    ```
@@ -548,7 +573,7 @@ To measure app launch time, you can refer to the following documentation for bot
 
 New Relic hosts and moderates an online forum where customers, users, maintainers, contributors, and New Relic employees can discuss and collaborate:
 
-[forum.newrelic.com](https://forum.newrelic.com/)
+[New Relic Explorers Hub topic](https://discuss.newrelic.com/tag/newrelic-flutter-agent)
 
 ## Contribute
 

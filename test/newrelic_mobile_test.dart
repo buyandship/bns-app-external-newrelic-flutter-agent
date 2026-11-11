@@ -53,7 +53,7 @@ void main() {
   const megaBytes = 100;
   const maxBufferTime = 300;
   const metricUnitBytes = "bytes";
-  const agentVersion = "1.1.14";
+  const agentVersion = "1.3.5";
   const traceData = {
     "id": "1",
     "guid": "2",
@@ -102,7 +102,7 @@ void main() {
     'distributedTracingEnabled': true,
     'collectorAddress': '',
     'crashCollectorAddress': '',
-    'logLevel': 'DEBUG'
+    'logLevel': 'WARN'
   };
 
   const boolValue = false;
@@ -494,6 +494,44 @@ void main() {
     ]);
   });
 
+  for (final platform in ['Android', 'iOS']) {
+    test('empty trace data is not forwarded as trace attributes on $platform', () async {
+      final platformManager = MockPlatformManager();
+      PlatformManager.setPlatformInstance(platformManager);
+      when(platformManager.isAndroid()).thenReturn(platform == 'Android');
+      when(platformManager.isIOS()).thenReturn(platform == 'iOS');
+
+      await NewrelicMobile.instance.noticeHttpTransaction(
+        url,
+        httpMethod,
+        statusCode,
+        startTime,
+        endTime,
+        bytesSent,
+        bytesReceived,
+        const {},
+      );
+
+      expect(methodCalLogs, [
+        isMethodCall(
+          'noticeHttpTransaction',
+          arguments: {
+            'url': url,
+            'httpMethod': httpMethod,
+            'statusCode': statusCode,
+            'startTime': startTime,
+            'endTime': endTime,
+            'bytesSent': bytesSent,
+            'bytesReceived': bytesReceived,
+            'responseBody': '',
+            'traceAttributes': null,
+            'params': null,
+          },
+        ),
+      ]);
+    });
+  }
+
   test('test noticeHttpTransaction should be called on iOS Platform', () async {
     var platformManger = MockPlatformManager();
     PlatformManager.setPlatformInstance(platformManger);
@@ -551,6 +589,55 @@ void main() {
       'responseBody': responseBody,
       'traceAttributes': null,
       'params': null
+    };
+    expect(methodCalLogs, <Matcher>[
+      isMethodCall(
+        'noticeHttpTransaction',
+        arguments: params,
+      )
+    ]);
+  });
+
+  test(
+      'test noticeHttpTransaction should omit the newrelic trace attribute on iOS Platform when native does not provide one',
+      () async {
+    var platformManger = MockPlatformManager();
+    PlatformManager.setPlatformInstance(platformManger);
+    when(platformManger.isAndroid()).thenAnswer((realInvocation) => false);
+    when(platformManger.isIOS()).thenAnswer((realInvocation) => true);
+
+    final traceDataWithoutNewrelicHeader = {
+      DTTraceTags.traceState: traceData[DTTraceTags.traceState],
+      DTTraceTags.traceParent: traceData[DTTraceTags.traceParent],
+    };
+
+    await NewrelicMobile.instance.noticeHttpTransaction(
+        url,
+        httpMethod,
+        statusCode,
+        startTime,
+        endTime,
+        bytesSent,
+        bytesReceived,
+        traceDataWithoutNewrelicHeader,
+        responseBody: responseBody,
+        httpParams: httpParams);
+
+    final traceAttributes = {
+      DTTraceTags.traceParent: traceData[DTTraceTags.traceParent],
+      DTTraceTags.traceState: traceData[DTTraceTags.traceState],
+    };
+    final Map<String, dynamic> params = <String, dynamic>{
+      'url': url,
+      'httpMethod': httpMethod,
+      'statusCode': statusCode,
+      'startTime': startTime,
+      'endTime': endTime,
+      'bytesSent': bytesSent,
+      'bytesReceived': bytesReceived,
+      'responseBody': responseBody,
+      'traceAttributes': traceAttributes,
+      'params': httpParams
     };
     expect(methodCalLogs, <Matcher>[
       isMethodCall(
@@ -945,17 +1032,7 @@ void main() {
     final Map<String, dynamic> eventParams = Map<String, dynamic>.from(params);
     eventParams.remove('stackTraceElements');
 
-    final Map<String, dynamic> customEventParams = <String, dynamic>{
-      'eventType': 'Mobile Dart Errors',
-      'eventName': '',
-      'eventAttributes': eventParams
-    };
-
     expect(methodCalLogs, <Matcher>[
-      isMethodCall(
-        'recordCustomEvent',
-        arguments: customEventParams,
-      ),
       isMethodCall(
         'recordError',
         arguments: params,
@@ -1076,9 +1153,7 @@ void main() {
 
     expect(methodCalLogs[1].method, 'logAttributes');
 
-    expect(methodCalLogs[2].method, 'recordCustomEvent');
-
-    expect(methodCalLogs[3].method, 'recordError');
+    expect(methodCalLogs[2].method, 'recordError');
   });
 
   test('test onError should called record error and record error as Fatal', () {
@@ -1112,16 +1187,8 @@ void main() {
     final Map<String, dynamic> eventParams = Map<String, dynamic>.from(params);
     eventParams.remove('stackTraceElements');
 
-    final Map<String, dynamic> customEventParams = <String, dynamic>{
-      'eventType': 'Mobile Dart Errors',
-      'eventName': '',
-      'eventAttributes': eventParams
-    };
-
-    expect(methodCalLogs, <Matcher>[
-      isMethodCall('recordCustomEvent', arguments: customEventParams),
-      isMethodCall('recordError', arguments: params)
-    ]);
+    expect(methodCalLogs,
+        <Matcher>[isMethodCall('recordError', arguments: params)]);
   });
 
   test("test navigation observer did pop method", () {
@@ -1566,5 +1633,5 @@ void main() {
     ]);
   });
 
-  params['logLevel'] = 'DEBUG';
+  params['logLevel'] = 'WARN';
 }

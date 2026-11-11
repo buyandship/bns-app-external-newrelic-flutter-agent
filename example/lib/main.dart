@@ -5,8 +5,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,12 @@ import 'package:newrelic_mobile/config.dart';
 import 'package:newrelic_mobile/network_failure.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:newrelic_mobile/newrelic_navigation_observer.dart';
-import 'package:newrelic_mobile_example/app_config.dart';
+import 'package:newrelic_mobile/utils/platform_manager.dart';
 import 'package:http/http.dart' as http;
+
+// Conditional imports for platform-specific functionality
+import 'dart:io' if (dart.library.js_interop) 'io_stub.dart';
+import 'dart:isolate' if (dart.library.js_interop) 'isolate_stub.dart';
 
 const String readCounters = """
    query (\$id: Int) { # Define which variables will be used in the query (id)
@@ -36,31 +39,31 @@ const String readCounters = """
 void main() {
   var appToken = "";
 
-  if (Platform.isAndroid) {
-    appToken = AppConfig.androidToken;
-  } else if (Platform.isIOS) {
-    appToken = AppConfig.iOSToken;
+  if (PlatformManager.instance.isAndroid()) {
+    appToken = "";
+  } else if (PlatformManager.instance.isIOS()) {
+    appToken = "";
   }
 
   Config config = Config(
-      accessToken: appToken,
-      analyticsEventEnabled: true,
-      networkErrorRequestEnabled: true,
-      networkRequestEnabled: true,
-      crashReportingEnabled: true,
-      interactionTracingEnabled: true,
-      httpResponseBodyCaptureEnabled: true,
-      loggingEnabled: true,
-      webViewInstrumentation: true,
-      printStatementAsEventsEnabled: true,
-      httpInstrumentationEnabled: true,
-      distributedTracingEnabled: true,
-      logLevel: LogLevel.VERBOSE,
-      collectorAddress: "",
-      crashCollectorAddress: "",
-      newEventSystemEnabled: true,
-      fedRampEnabled: false,
-      );
+    accessToken: appToken,
+    analyticsEventEnabled: true,
+    networkErrorRequestEnabled: true,
+    networkRequestEnabled: true,
+    crashReportingEnabled: true,
+    interactionTracingEnabled: true,
+    httpResponseBodyCaptureEnabled: true,
+    loggingEnabled: true,
+    webViewInstrumentation: true,
+    printStatementAsEventsEnabled: true,
+    httpInstrumentationEnabled: true,
+    distributedTracingEnabled: true,
+    logLevel: LogLevel.VERBOSE,
+    collectorAddress: "",
+    crashCollectorAddress: "",
+    newEventSystemEnabled: true,
+    fedRampEnabled: false,
+  );
 
   NewrelicMobile.instance.start(config, () {
     _testFetch();
@@ -119,9 +122,9 @@ class Page1Screen extends StatelessWidget {
                     onPressed: () async {
                       debugPrint(null);
                       NewrelicMobile.instance.recordMetric(
-                          "Button Clicks",
-                          "Test Champ",
-                          );
+                        "Button Clicks",
+                        "Test Champ",
+                      );
                       NewrelicMobile.instance
                           .recordBreadcrumb("Button Got Pressed on Screen 3");
                       NewrelicMobile.instance.logInfo("testing logs");
@@ -232,8 +235,8 @@ class Page1Screen extends StatelessWidget {
                     onPressed: () async {
                       // final client = HttpClient();
                       // var uri = Uri.parse("https://reactnative.dev/movies.json");
-                      var response = await http.get(
-                          Uri.parse("https://reactnative.dev/movies.json"));
+                      var response = await http.get(Uri.parse(
+                          "https://www.talabat.com/restaurantapi/v1/vendors/725706/fees"));
                       // request.followRedirects = false;
 
                       // var url = Uri.parse(

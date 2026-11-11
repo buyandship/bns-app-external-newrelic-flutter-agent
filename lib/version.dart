@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#import <Flutter/Flutter.h>
-
-@interface NewrelicMobilePlugin : NSObject<FlutterPlugin>
-@end
+/// Flutter Agent version
+/// This should match the version in pubspec.yaml
+const String agentVersion = '1.3.5';
