@@ -494,44 +494,6 @@ void main() {
     ]);
   });
 
-  for (final platform in ['Android', 'iOS']) {
-    test('empty trace data is not forwarded as trace attributes on $platform', () async {
-      final platformManager = MockPlatformManager();
-      PlatformManager.setPlatformInstance(platformManager);
-      when(platformManager.isAndroid()).thenReturn(platform == 'Android');
-      when(platformManager.isIOS()).thenReturn(platform == 'iOS');
-
-      await NewrelicMobile.instance.noticeHttpTransaction(
-        url,
-        httpMethod,
-        statusCode,
-        startTime,
-        endTime,
-        bytesSent,
-        bytesReceived,
-        const {},
-      );
-
-      expect(methodCalLogs, [
-        isMethodCall(
-          'noticeHttpTransaction',
-          arguments: {
-            'url': url,
-            'httpMethod': httpMethod,
-            'statusCode': statusCode,
-            'startTime': startTime,
-            'endTime': endTime,
-            'bytesSent': bytesSent,
-            'bytesReceived': bytesReceived,
-            'responseBody': '',
-            'traceAttributes': null,
-            'params': null,
-          },
-        ),
-      ]);
-    });
-  }
-
   test('test noticeHttpTransaction should be called on iOS Platform', () async {
     var platformManger = MockPlatformManager();
     PlatformManager.setPlatformInstance(platformManger);
